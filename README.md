@@ -1,5 +1,5 @@
 # Terratest with localstack
-![test build](https://github.com/edsoncelio/terratest-localstack/actions/workflows/main.yml/badge.svg)
+![test build](https://github.com/spo-ops/terratest-localstack/actions/workflows/main.yml/badge.svg)
 
 > Work in Progress
 
@@ -16,6 +16,11 @@ This repo will create a s3 bucket and test using the following technologies:
 ## Tests
 
 > Warning: to run the tests locally, you need to setup [localstack](https://github.com/localstack/localstack)
+
+```
+docker run --rm -it -p 4566:4566 -p 4571:4571 localstack/localstack
+
+```
 
 To run the tests locally:   
 1. `cd tests`
