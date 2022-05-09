@@ -18,7 +18,19 @@ This repo will create a s3 bucket and test using the following technologies:
 > Warning: to run the tests locally, you need to setup [localstack](https://github.com/localstack/localstack)
 
 ```
+## Starting LocalStack with Docker
+docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack
+
 docker run --rm -it -p 4566:4566 -p 4571:4571 localstack/localstack
+
+## Starting LocalStack Pro or Enterprise using Docker
+export LOCALSTACK_API_KEY=61ld2V6lTX
+docker run \
+  --rm -it \
+  -p 4566:4566 \
+  -p 4571:4571 \
+  -e LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY} \
+  localstack/localstack
 
 ```
 

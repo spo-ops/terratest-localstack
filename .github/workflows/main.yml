@@ -9,33 +9,68 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Test:
+  #   runs-on: ubuntu-latest
+
+  #   services:
+  #     localstack:
+  #       image: localstack/localstack:latest
+  #       ports:
+  #         - 4566:4566
+  #         - 4569:4569
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install dependencies
+  #       run: |
+  #         apt update && apt install git curl unzip build-essential -y
+
+  #     - name: Install node
+  #       run: |
+  #         curl -fsSL https://deb.nodesource.com/setup_15.x | bash
+  #         apt-get install -y nodejs
+
+  #     - name: Setup Go environment
+  #       uses: actions/setup-go@v3.0.0
+  #       with:
+  #         go-version: '>=1.17.0'
+  #     - run: go version
+
+
+  #     - name: HashiCorp - Setup Terraform
+  #       uses: hashicorp/setup-terraform@v1.4.0
+  #       with:
+  #         terraform_version: 0.13
+  #         terraform_wrapper: false
+
+  #     - name: Run the tests
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         AWS_DEFAULT_REGION: "us-east-1"
+  #       run: cd ./test && go test -v
+
   Test:
     runs-on: ubuntu-latest
-    container: ubuntu:20.04
-    
-    services:
-      localstack:
-        image: localstack/localstack:latest
-        ports:
-          - 4566:4566
-          - 4569:4569
     steps:
-      - uses: actions/checkout@v3
-      - name: Install dependencies
+      - name: Start LocalStack
+        env:
+          LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
         run: |
-          apt update && apt install git curl unzip build-essential -y
-
-      - name: Install node
+          # install LocalStack cli and awslocal
+          pip install localstack awscli-local[ver1]
+          # Make sure to pull the latest version of the image
+          docker pull localstack/localstack
+          # Start LocalStack in the background
+          localstack start -d
+          # Wait 30 seconds for the LocalStack container to become ready before timing out
+          echo "Waiting for LocalStack startup..."
+          localstack wait -t 30
+          echo "Startup complete"          
+      - name: Run some Tests against LocalStack
         run: |
-          curl -fsSL https://deb.nodesource.com/setup_15.x | bash
-          apt-get install -y nodejs
-
-      - name: Setup Go environment
-        uses: actions/setup-go@v3.0.0
-        with:
-          go-version: '>=1.17.0'
-      - run: go version
-
+          awslocal s3 mb s3://test
+          awslocal s3 ls
+          echo "Test Execution complete!" 
 
       - name: HashiCorp - Setup Terraform
         uses: hashicorp/setup-terraform@v1.4.0
