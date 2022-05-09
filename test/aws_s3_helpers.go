@@ -23,7 +23,7 @@ func runAwsS3Localstack(t *testing.T) {
 		TerraformDir: "../",
 
 		Vars: map[string]interface{}{
-			"bucket_name":        expectedName,
+			"bucket_name": expectedName,
 		},
 
 		EnvVars: map[string]string{
@@ -40,5 +40,5 @@ func runAwsS3Localstack(t *testing.T) {
 
 	bucketRegion := terraform.Output(t, terraformOptions, "this_s3_bucket_region")
 	assert.Equal(t, "us-east-1", bucketRegion)
-	
+
 }
