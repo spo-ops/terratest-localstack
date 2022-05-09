@@ -19,6 +19,9 @@ jobs:
         ports:
           - 4566:4566
           - 4569:4569
+        env:
+          LOCALSTACK_API_KEY: ${{ secrets.LOCALSTACK_API_KEY }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
